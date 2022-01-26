@@ -32,7 +32,6 @@ def fetch_blogs(request):
                     "user": comment_object.user.username,
                     "text": comment_object.comment,
                     "datePublished": str(comment_object.date_posted)
-
                 }
                 comments.append(tmp)
 
@@ -51,3 +50,50 @@ def fetch_blogs(request):
             res.append(tmp)
 
         return JsonResponse({"data": res})
+
+def fetch_projects(request):
+    projects = Project.objects.all()
+
+    res = []
+    scheme = request.is_secure() and "https" or "http"
+
+    for project_object in projects:
+        tags = []
+        for tag in project_object.tags.all():
+            tmp = {
+                "tag": tag.name,
+                "count": tag.count
+            }
+            tags.append(tmp)
+
+        tech_stack = []
+        for stack in project_object.tech_stack.all():
+            tmp = {
+                "tech": stack.name
+            }
+            tech_stack.append(tmp)
+
+        comments = []
+        cmts = ProjectComment.objects.filter(project__pk=project_object.pk)
+        for comment_object in cmts:
+            tmp = {
+                "user": comment_object.user.username,
+                "text": comment_object.comment,
+                "datePublished": str(comment_object.date_posted)
+            }
+            comments.append(tmp)
+
+        tmp = {
+            "id": project_object.id,
+            "img": f'{scheme}://{request.get_host()}' + project_object.image.url,
+            "author": project_object.person.username,
+            "title": project_object.title,
+            "datePublished": str(project_object.date_posted),
+            "content": project_object.content,
+            "tags": tags,
+            "tech_stack": tech_stack,
+            "comments": comments
+        }
+        res.append(tmp)
+    
+    return JsonResponse({"data": res})
