@@ -18,7 +18,7 @@ class StreamSerializer(serializers.ModelSerializer):
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        field = ("name", "count")
+        field = ("name")
 
 
 class PersonSerializer(serializers.ModelSerializer):
@@ -30,9 +30,8 @@ class PersonSerializer(serializers.ModelSerializer):
 
 
 class BlogSerializer(serializers.ModelSerializer):
-    tag = TagSerializer(read_only=True, many=True)
-    # print(tag)
+    tags = TagSerializer()
 
     class Meta:
         model = Blog
-        fields = '__all__'
+        fields = ("title", "tags")
