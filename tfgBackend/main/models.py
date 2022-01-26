@@ -7,22 +7,34 @@ from django.db import models
 class University(models.Model):
     name = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.name
+
 
 class Stream(models.Model):
     name = models.CharField(max_length=20)
 
+    def __str__(self):
+        return self.name
+
 
 class Person(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="person_user")
     university = models.ForeignKey(University, on_delete=models.CASCADE)
     stream = models.ForeignKey(Stream, on_delete=models.CASCADE)
     batch = models.IntegerField(default=-1)
     role = models.CharField(max_length=10)
 
+    def __str__(self):
+        return self.user.username
+
 
 class Tag(models.Model):
     name = models.CharField(max_length=50)
     count = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.name
 
 
 class Question(models.Model):
